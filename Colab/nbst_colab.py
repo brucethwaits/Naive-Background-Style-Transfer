@@ -90,7 +90,7 @@ class SemanticSegmentation():
         mask_image = np.where(seg_map == 15, [255, 255, 255, 255], [0, 0, 0, 255]).astype(np.uint8)
         img = Image.fromarray(mask_image)
         rgb_img = img.convert('RGB')
-        rgb_img = rgb_img.resize((original_image.size[0], original_image.size[1]), Image.ANTIALIAS)
+        rgb_img = rgb_img.resize((original_image.size[0], original_image.size[1]), Image.DEFAULT_STRATEGY)# .ANTIALIAS)
         rgb_img.save(self.path.mask_image_path)
 
     def _generate_mask(self, model):
@@ -193,7 +193,7 @@ class DeepLabModel(object):
     width, height = image.size
     resize_ratio = 1.0 * self.INPUT_SIZE / max(width, height)
     target_size = (int(resize_ratio * width), int(resize_ratio * height))
-    resized_image = image.convert('RGB').resize(target_size, Image.ANTIALIAS)
+    resized_image = image.convert('RGB').resize(target_size, Image.DEFAULT_STRATEGY)# .ANTIALIAS)
     batch_seg_map = self.sess.run(
         self.OUTPUT_TENSOR_NAME,
         feed_dict={self.INPUT_TENSOR_NAME: [np.asarray(resized_image)]})
@@ -306,7 +306,7 @@ class NaiveBackgroundStyleTransfer():
         """
         img = Image.open(filename)
         # Downsample Image using Image.ANTIALIAS
-        img = img.resize((img.size[0], img.size[1]), Image.ANTIALIAS)
+        img = img.resize((img.size[0], img.size[1]), Image.DEFAULT_STRATEGY)# .ANTIALIAS))
         img = np.array(img, dtype=np.float32)
         # Remove Alpha Channel if present.
         if(img.shape[2] == 4):
@@ -331,7 +331,7 @@ class NaiveBackgroundStyleTransfer():
         self._generate_mask(input_file)
         mask = Image.open(self.path.mask_image_path).convert('L')
         # Downsample mask using Image.ANTIALIAS
-        mask = mask.resize((mask.size[0], mask.size[1]), Image.ANTIALIAS)
+        mask = mask.resize((mask.size[0], mask.size[1]), Image.DEFAULT_STRATEGY)# .ANTIALIAS))
         mask = np.array(mask, dtype=np.float32)
         # Normalize the mask.
         mask = mask / 255.

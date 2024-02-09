@@ -4,8 +4,8 @@ from six.moves import urllib
 import os
 import numpy as np
 from PIL import Image
-from deep_lab import DeepLabModel
-from utils import IO
+from naive_background_style_transfer.utils import IO
+from naive_background_style_transfer.deep_lab import DeepLabModel
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 class SemanticSegmentation():
@@ -45,7 +45,7 @@ class SemanticSegmentation():
         self._generate_mask(model)
         if(os.path.exists(self.path.mask_image_path)):
             if(self.verbose):
-                print "Mask Created!"
+                print ("Mask Created!")
 
     def _generate_semantic_segmentation(self, seg_map, original_image):
         """
@@ -61,7 +61,7 @@ class SemanticSegmentation():
         mask_image = np.where(seg_map == 15, [255, 255, 255, 255], [0, 0, 0, 255]).astype(np.uint8)
         img = Image.fromarray(mask_image)
         rgb_img = img.convert('RGB')
-        rgb_img = rgb_img.resize((original_image.size[0], original_image.size[1]), Image.ANTIALIAS)
+        rgb_img = rgb_img.resize((original_image.size[0], original_image.size[1]), Image.DEFAULT_STRATEGY)# .ANTIALIAS))
         rgb_img.save(self.path.mask_image_path)
 
     def _generate_mask(self, model):
@@ -74,7 +74,7 @@ class SemanticSegmentation():
         if img.mode != 'RGB':
          img = img.convert('RGB')
         if(self.verbose):
-            print "Running deeplab on image "+str(self.input_file)+" ..."
+            print ("Running deeplab on image "+str(self.input_file)+" ...")
         seg_map = model.run(img)
         self._generate_semantic_segmentation(seg_map, img)
 
@@ -99,12 +99,12 @@ class SemanticSegmentation():
             os.makedirs(model_dir)
         download_path = os.path.join(model_dir, tarball_name)
         if(self.verbose):
-            print "Downloading model ..."
+            print ("Downloading model ...")
         urllib.request.urlretrieve(download_url_prefix + model_urls[self.model_name],
                            download_path)
         if(self.verbose):
-            print "Download Complete! Loading DeepLabModel..."
+            print ("Download Complete! Loading DeepLabModel...")
         model = DeepLabModel(download_path)
         if(self.verbose):
-            print "Model Loaded Successfully!"
+            print ("Model Loaded Successfully!")
         return model

@@ -1,1 +1,3 @@
 from .naive_background_style_transfer import NaiveBackgroundStyleTransfer
+from naive_background_style_transfer.semantic_segmentation import SemanticSegmentation
+from naive_background_style_transfer.deep_lab import DeepLabModel

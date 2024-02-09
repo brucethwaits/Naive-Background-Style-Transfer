@@ -6,8 +6,8 @@ from PIL import Image
 import matplotlib.pyplot as plt
 from tensorflow.python.keras import models
 import os
-from semantic_segmentation import SemanticSegmentation
-from utils import IO
+from naive_background_style_transfer.semantic_segmentation import SemanticSegmentation
+from naive_background_style_transfer.utils import IO
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 class NaiveBackgroundStyleTransfer():
@@ -113,7 +113,7 @@ class NaiveBackgroundStyleTransfer():
         """
         img = Image.open(filename)
         # Downsample Image using Image.ANTIALIAS
-        img = img.resize((img.size[0], img.size[1]), Image.ANTIALIAS)
+        img = img.resize((img.size[0], img.size[1]), Image.DEFAULT_STRATEGY)# .ANTIALIAS))
         img = np.array(img, dtype=np.float32)
         # Remove Alpha Channel if present.
         if(img.shape[2] == 4):
@@ -138,7 +138,7 @@ class NaiveBackgroundStyleTransfer():
         self._generate_mask(input_file)
         mask = Image.open(self.path.mask_image_path).convert('L')
         # Downsample mask using Image.ANTIALIAS
-        mask = mask.resize((mask.size[0], mask.size[1]), Image.ANTIALIAS)
+        mask = mask.resize((mask.size[0], mask.size[1]), Image.DEFAULT_STRATEGY)# .ANTIALIAS))
         mask = np.array(mask, dtype=np.float32)
         # Normalize the mask.
         mask = mask / 255.
